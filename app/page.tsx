@@ -71,6 +71,8 @@ export default function Home() {
     if (!root.current) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
+    const isMobile = window.matchMedia("(max-width: 820px)").matches;
+
     const context = gsap.context(() => {
       ScrollTrigger.create({
         trigger: root.current,
@@ -108,13 +110,17 @@ export default function Home() {
         const chars = section.querySelectorAll(".char");
         const mediaBands = section.querySelectorAll(".media-band");
         const rails = section.querySelectorAll(".term-rail");
+        const mobileSequencedScene = isMobile && (section.classList.contains("company-scene") || section.classList.contains("finale"));
+        const lead = mobileSequencedScene ? 0.5 : 0;
+        const mediaCloseAt = mobileSequencedScene ? 2.25 : 1.55;
+        const charsCloseAt = mobileSequencedScene ? 2.32 : 1.62;
         const timeline = gsap.timeline({ scrollTrigger: { trigger: section, start: "top top", end: "bottom bottom", scrub: 1 } });
 
         timeline.fromTo(
           chars,
           { rotateY: sectionIndex % 2 ? 88 : -88, scaleX: 0.2, opacity: 0.12 },
           { rotateY: 0, scaleX: 1, opacity: 1, stagger: { each: 0.012, from: sectionIndex % 3 === 0 ? "center" : "start" }, duration: 0.8, ease: "power3.out" },
-          0,
+          lead,
         );
 
         if (mediaBands.length) {
@@ -122,39 +128,66 @@ export default function Home() {
             mediaBands,
             { clipPath: "inset(0 50% 0 50%)", z: -180, filter: "grayscale(1) contrast(1.25)" },
             { clipPath: "inset(0 0% 0 0%)", z: 0, filter: "grayscale(.2) contrast(1.08)", stagger: 0.08, duration: 1.1, ease: "power2.inOut" },
-            0.08,
+            lead + 0.08,
           );
           timeline.to(
             mediaBands,
             { clipPath: "inset(48% 0 48% 0)", z: 120, stagger: { each: 0.05, from: "edges" }, duration: 0.75 },
-            1.55,
+            mediaCloseAt,
           );
         }
 
         if (rails.length) {
-          timeline.fromTo(rails, { "--rail-scale": 0 }, { "--rail-scale": 1, duration: 1.2, ease: "none" }, 0.1);
+          timeline.fromTo(rails, { "--rail-scale": 0 }, { "--rail-scale": 1, duration: 1.2, ease: "none" }, lead + 0.1);
         }
 
         timeline.to(
           chars,
           { rotateX: -78, scaleY: 0.18, opacity: 0.1, stagger: { each: 0.008, from: "edges" }, duration: 0.65, ease: "power2.in" },
-          1.62,
+          charsCloseAt,
         );
       });
 
       const convergenceIntro = root.current?.querySelector<HTMLElement>(".convergence-intro");
       if (convergenceIntro) {
         const chars = convergenceIntro.querySelectorAll(".char");
-        const convergenceTimeline = gsap.timeline({ scrollTrigger: { trigger: convergenceIntro, start: "top 48%", end: "bottom 8%", scrub: 1 } });
-        convergenceTimeline.fromTo(chars, { rotateY: -88, scaleX: 0.2, opacity: 0.12 }, { rotateY: 0, scaleX: 1, opacity: 1, stagger: { each: 0.012, from: "center" }, duration: 0.8, ease: "power3.out" }, 0.28);
-        convergenceTimeline.to(chars, { rotateX: -78, scaleY: 0.18, opacity: 0.1, stagger: { each: 0.008, from: "edges" }, duration: 0.65, ease: "power2.in" }, 1.62);
+        const convergenceTimeline = gsap.timeline({
+          scrollTrigger: {
+            trigger: convergenceIntro,
+            start: isMobile ? "top 8%" : "top 48%",
+            end: isMobile ? "bottom top" : "bottom 8%",
+            scrub: 1,
+          },
+        });
+        convergenceTimeline.fromTo(
+          chars,
+          { rotateY: -88, scaleX: 0.2, opacity: 0.12 },
+          { rotateY: 0, scaleX: 1, opacity: 1, stagger: { each: 0.012, from: "center" }, duration: 0.8, ease: "power3.out" },
+          isMobile ? 0 : 0.28,
+        );
+        convergenceTimeline.to(
+          chars,
+          { rotateX: -78, scaleY: 0.18, opacity: 0.1, stagger: { each: 0.008, from: "edges" }, duration: 0.65, ease: "power2.in" },
+          isMobile ? 1.95 : 1.62,
+        );
       }
 
       gsap.utils.toArray<HTMLElement>(".combo-line").forEach((line, index) => {
         gsap.fromTo(
           line.querySelectorAll(".char"),
           { rotateX: 88, scaleY: 0.1, opacity: 0.08 },
-          { rotateX: 0, scaleY: 1, opacity: 1, stagger: { each: 0.01, from: index % 2 ? "edges" : "center" }, scrollTrigger: { trigger: line, start: "top 82%", end: "center 48%", scrub: 0.8 } },
+          {
+            rotateX: 0,
+            scaleY: 1,
+            opacity: 1,
+            stagger: { each: 0.01, from: index % 2 ? "edges" : "center" },
+            scrollTrigger: {
+              trigger: line,
+              start: isMobile ? "top 62%" : "top 82%",
+              end: isMobile ? "top 28%" : "center 48%",
+              scrub: 0.8,
+            },
+          },
         );
       });
 
@@ -162,7 +195,18 @@ export default function Home() {
         gsap.fromTo(
           line.querySelectorAll(".char"),
           { rotateY: index % 2 ? 84 : -84, opacity: 0.08, scaleX: 0.15 },
-          { rotateY: 0, opacity: 1, scaleX: 1, stagger: { each: 0.008, from: "center" }, scrollTrigger: { trigger: line, start: "top 78%", end: "center 46%", scrub: true } },
+          {
+            rotateY: 0,
+            opacity: 1,
+            scaleX: 1,
+            stagger: { each: 0.008, from: "center" },
+            scrollTrigger: {
+              trigger: line,
+              start: isMobile ? "top 62%" : "top 78%",
+              end: isMobile ? "top 28%" : "center 46%",
+              scrub: true,
+            },
+          },
         );
       });
 
@@ -173,7 +217,19 @@ export default function Home() {
           gsap.fromTo(
             title.querySelectorAll(".char"),
             { rotateY: -88, scaleX: 0.18, opacity: 0.08 },
-            { rotateY: 0, scaleX: 1, opacity: 1, stagger: { each: 0.025, from: "center" }, ease: "power3.out", scrollTrigger: { trigger: title, start: "top 82%", end: "top 42%", scrub: 0.9 } },
+            {
+              rotateY: 0,
+              scaleX: 1,
+              opacity: 1,
+              stagger: { each: 0.025, from: "center" },
+              ease: "power3.out",
+              scrollTrigger: {
+                trigger: title,
+                start: isMobile ? "top 68%" : "top 82%",
+                end: isMobile ? "top 32%" : "top 42%",
+                scrub: 0.9,
+              },
+            },
           );
         }
       }
