@@ -97,8 +97,8 @@ export default function Home() {
         const convergenceTimeline = gsap.timeline({
           scrollTrigger: {
             trigger: convergenceIntro,
-            start: "top 78%",
-            end: "bottom 18%",
+            start: "top 48%",
+            end: "bottom 8%",
             scrub: 1,
           },
         });
@@ -106,7 +106,7 @@ export default function Home() {
           chars,
           { rotateY: -88, scaleX: 0.2, opacity: 0.12 },
           { rotateY: 0, scaleX: 1, opacity: 1, stagger: { each: 0.012, from: "center" }, duration: 0.8, ease: "power3.out" },
-          0,
+          0.28,
         );
         convergenceTimeline.to(
           chars,
