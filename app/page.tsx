@@ -88,10 +88,10 @@ export default function Home() {
         const heroTimeline = gsap.timeline({ scrollTrigger: { trigger: hero, start: "top top", end: "bottom bottom", scrub: 1 } });
         rows.forEach((row, rowIndex) => {
           const chars = row.querySelectorAll(".char");
-          const beat = rowIndex * 1.2;
+          const beat = 0.35 + rowIndex * 1.2;
           heroTimeline.fromTo(
             chars,
-            { rotateX: rowIndex === 0 ? -20 : (rowIndex % 2 ? 86 : -86), rotateY: rowIndex % 2 ? -18 : 18, scaleY: rowIndex === 0 ? 0.86 : 0.15, opacity: rowIndex === 0 ? 0.72 : 0.06 },
+            { rotateX: rowIndex === 0 ? -20 : (rowIndex % 2 ? 86 : -86), rotateY: rowIndex % 2 ? -18 : 18, scaleY: rowIndex === 0 ? 0.86 : 0.15, opacity: 0 },
             { rotateX: 0, rotateY: 0, scaleY: 1, opacity: 1, duration: 0.56, stagger: { each: 0.022, from: rowIndex === 2 ? "center" : "start" }, ease: "power3.out" },
             beat,
           );
@@ -100,8 +100,8 @@ export default function Home() {
           }
         });
         heroTimeline
-          .fromTo(".hero-deck", { clipPath: "inset(0 100% 0 0)" }, { clipPath: "inset(0 0% 0 0)", duration: 0.7 }, 5.25)
-          .fromTo(".hero-rule", { scaleX: 0 }, { scaleX: 1, duration: 1.2, ease: "none" }, 0);
+          .fromTo(".hero-deck", { clipPath: "inset(0 100% 0 0)" }, { clipPath: "inset(0 0% 0 0)", duration: 0.7 }, 5.6)
+          .fromTo(".hero-rule", { scaleX: 0 }, { scaleX: 1, duration: 1.2, ease: "none" }, 0.35);
       }
 
       gsap.utils.toArray<HTMLElement>("[data-kinetic]").forEach((section, sectionIndex) => {
