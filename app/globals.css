@@ -18,6 +18,6 @@
 .project-scene{color:var(--ink)!important;border-top:1px solid var(--line-light)!important;background:var(--paper)}
 .project-scene .company-stage{background:var(--paper)}
 .project-scene .scene-index,.project-scene .company-name,.project-scene .company-copy p,.project-scene .term-rail{color:var(--ink)}
-.project-scene .company-name{text-shadow:0 0 32px rgba(240,239,233,.96),0 0 12px rgba(240,239,233,.92)}
+.project-scene .company-name{text-shadow:none}
 .project-scene .media-band::after{background:linear-gradient(180deg,rgba(240,239,233,.02),rgba(240,239,233,.18))}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.char,.media-band,.case-frame,.procedural-grid{transform:none!important;opacity:1!important}}
