@@ -104,13 +104,13 @@ export default function Home() {
 
       const casesHead = root.current?.querySelector<HTMLElement>(".cases-head");
       if (casesHead) {
-        gsap.fromTo(casesHead.querySelectorAll(".char"), { rotateY: -88, scaleX: 0.18, opacity: 0.08 }, { rotateY: 0, scaleX: 1, opacity: 1, stagger: { each: 0.025, from: "center" }, ease: "power3.out", scrollTrigger: { trigger: casesHead, start: "top 68%", end: "center 48%", scrub: 0.9 } });
+        gsap.fromTo(casesHead.querySelectorAll(".char"), { rotateY: -88, scaleX: 0.18, opacity: 0.08 }, { rotateY: 0, scaleX: 1, opacity: 1, stagger: { each: 0.025, from: "center" }, ease: "power3.out", scrollTrigger: { trigger: casesHead, start: "top 38%", end: "center 22%", scrub: 0.9 } });
       }
 
       gsap.utils.toArray<HTMLElement>(".case").forEach((caseScene, index) => {
         const chars = caseScene.querySelectorAll("h3 .char");
         const meta = caseScene.querySelector(".case-meta");
-        const textTimeline = gsap.timeline({ scrollTrigger: { trigger: caseScene, start: "top 72%", end: "center 42%", scrub: 0.9 } });
+        const textTimeline = gsap.timeline({ scrollTrigger: { trigger: caseScene, start: "top 40%", end: "center 24%", scrub: 0.9 } });
         textTimeline.fromTo(chars, { rotateY: index % 2 ? 88 : -88, scaleX: 0.18, opacity: 0.08 }, { rotateY: 0, scaleX: 1, opacity: 1, stagger: { each: 0.012, from: index % 2 ? "edges" : "center" }, duration: 0.9, ease: "power3.out" }, 0.18);
         if (meta) textTimeline.fromTo(meta, { clipPath: "inset(0 100% 0 0)", opacity: 0.15 }, { clipPath: "inset(0 0% 0 0)", opacity: 1, duration: 0.55, ease: "power2.out" }, 0.08);
       });
