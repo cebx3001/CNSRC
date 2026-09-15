@@ -94,29 +94,26 @@ export default function Home() {
       const convergenceIntro = root.current?.querySelector<HTMLElement>(".convergence-intro");
       if (convergenceIntro) {
         const chars = convergenceIntro.querySelectorAll(".char");
-        const convergenceTimeline = gsap.timeline({
-          scrollTrigger: {
-            trigger: convergenceIntro,
-            start: "top 48%",
-            end: "bottom 8%",
-            scrub: 1,
-          },
-        });
-        convergenceTimeline.fromTo(
-          chars,
-          { rotateY: -88, scaleX: 0.2, opacity: 0.12 },
-          { rotateY: 0, scaleX: 1, opacity: 1, stagger: { each: 0.012, from: "center" }, duration: 0.8, ease: "power3.out" },
-          0.28,
-        );
-        convergenceTimeline.to(
-          chars,
-          { rotateX: -78, scaleY: 0.18, opacity: 0.1, stagger: { each: 0.008, from: "edges" }, duration: 0.65, ease: "power2.in" },
-          1.62,
-        );
+        const convergenceTimeline = gsap.timeline({ scrollTrigger: { trigger: convergenceIntro, start: "top 48%", end: "bottom 8%", scrub: 1 } });
+        convergenceTimeline.fromTo(chars, { rotateY: -88, scaleX: 0.2, opacity: 0.12 }, { rotateY: 0, scaleX: 1, opacity: 1, stagger: { each: 0.012, from: "center" }, duration: 0.8, ease: "power3.out" }, 0.28);
+        convergenceTimeline.to(chars, { rotateX: -78, scaleY: 0.18, opacity: 0.1, stagger: { each: 0.008, from: "edges" }, duration: 0.65, ease: "power2.in" }, 1.62);
       }
 
       gsap.utils.toArray<HTMLElement>(".combo-line").forEach((line, index) => { gsap.fromTo(line.querySelectorAll(".char"), { rotateX: 88, scaleY: 0.1, opacity: 0.08 }, { rotateX: 0, scaleY: 1, opacity: 1, stagger: { each: 0.01, from: index % 2 ? "edges" : "center" }, scrollTrigger: { trigger: line, start: "top 82%", end: "center 48%", scrub: 0.8 } }); });
       gsap.utils.toArray<HTMLElement>(".capability-line").forEach((line, index) => { gsap.fromTo(line.querySelectorAll(".char"), { rotateY: index % 2 ? 84 : -84, opacity: 0.08, scaleX: 0.15 }, { rotateY: 0, opacity: 1, scaleX: 1, stagger: { each: 0.008, from: "center" }, scrollTrigger: { trigger: line, start: "top 78%", end: "center 46%", scrub: true } }); });
+
+      const casesHead = root.current?.querySelector<HTMLElement>(".cases-head");
+      if (casesHead) {
+        gsap.fromTo(casesHead.querySelectorAll(".char"), { rotateY: -88, scaleX: 0.18, opacity: 0.08 }, { rotateY: 0, scaleX: 1, opacity: 1, stagger: { each: 0.025, from: "center" }, ease: "power3.out", scrollTrigger: { trigger: casesHead, start: "top 68%", end: "center 48%", scrub: 0.9 } });
+      }
+
+      gsap.utils.toArray<HTMLElement>(".case").forEach((caseScene, index) => {
+        const chars = caseScene.querySelectorAll("h3 .char");
+        const meta = caseScene.querySelector(".case-meta");
+        const textTimeline = gsap.timeline({ scrollTrigger: { trigger: caseScene, start: "top 72%", end: "center 42%", scrub: 0.9 } });
+        textTimeline.fromTo(chars, { rotateY: index % 2 ? 88 : -88, scaleX: 0.18, opacity: 0.08 }, { rotateY: 0, scaleX: 1, opacity: 1, stagger: { each: 0.012, from: index % 2 ? "edges" : "center" }, duration: 0.9, ease: "power3.out" }, 0.18);
+        if (meta) textTimeline.fromTo(meta, { clipPath: "inset(0 100% 0 0)", opacity: 0.15 }, { clipPath: "inset(0 0% 0 0)", opacity: 1, duration: 0.55, ease: "power2.out" }, 0.08);
+      });
     }, root);
     return () => context.revert();
   }, []);
@@ -136,7 +133,7 @@ export default function Home() {
 
       <section className="total-capacity scene-dark"><div className="capacity-heading"><div className="scene-index">CAPACIDAD TOTAL <span>07 CAMPOS</span></div><p>UNA SOLA ESTRUCTURA / DE LA IDEA AL DESPLIEGUE</p></div><div className="capability-list">{totalCapabilities.map((capability,index) => <div className="capability-line" key={capability}><span className="cap-number">{String(index+1).padStart(2,"0")}</span><KineticText>{capability}</KineticText></div>)}</div></section>
 
-      <section className="cases scene-light" aria-labelledby="cases-title"><div className="cases-head"><div className="scene-index dark-index">CASOS / MARCOS ABIERTOS <span>03</span></div><h2 id="cases-title">PROYECTOS</h2></div>{cases.map((project,index) => <article className={`case case-${index+1}`} key={project.number}><div className="case-image" aria-hidden="true">{[0,1,2].map((band) => <div className="case-slice" key={band}><img src={project.image} alt="" /></div>)}</div><div className="case-meta"><span>{project.number}</span><span>{project.tags}</span></div><h3><KineticText>{project.title}</KineticText></h3></article>)}</section>
+      <section className="cases scene-light" aria-labelledby="cases-title"><div className="cases-head"><div className="scene-index dark-index">CASOS / MARCOS ABIERTOS <span>03</span></div><h2 id="cases-title" style={{ fontSize: "clamp(5rem, 15vw, 15rem)", lineHeight: 0.78, whiteSpace: "nowrap" }}><KineticText>PROYECTOS</KineticText></h2></div>{cases.map((project,index) => <article className={`case case-${index+1}`} key={project.number}><div className="case-image" aria-hidden="true">{[0,1,2].map((band) => <div className="case-slice" key={band}><img src={project.image} alt="" /></div>)}</div><div className="case-meta"><span>{project.number}</span><span>{project.tags}</span></div><h3><KineticText>{project.title}</KineticText></h3></article>)}</section>
 
       <footer id="contacto" className="finale scene-light kinetic-scene" data-kinetic><div className="sticky-stage finale-stage"><div className="scene-index dark-index">SIGUIENTE PROYECTO <span>∞</span></div><h2><KineticText>DE LA ESTRATEGIA A LA IMPLEMENTACIÓN.</KineticText></h2><p className="finale-copy">Una estructura capaz de pensar, producir, desarrollar e implementar proyectos completos.</p><div className="finale-companies">B2W AGENCY · MONARCA MEDIA · DOCTOR BROWN LABS · TRIDIFECT</div><a className="contact-link" href="mailto:proyectos@cnsrc.com"><span>HABLEMOS DE TU PROYECTO</span><span aria-hidden="true">↗</span></a><div className="footer-line"><span>CNSRC / 2026</span><a href="#top">VOLVER ARRIBA ↑</a></div></div></footer>
     </main>
