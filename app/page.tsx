@@ -184,6 +184,42 @@ export default function Home() {
 
   return (
     <main ref={root} className="site-shell">
+      <style>{`
+        @media (min-width: 821px) {
+          .project-scene .project-copy {
+            left: auto;
+            right: 22px;
+            bottom: 52px;
+            width: min(34vw, 520px);
+            display: block;
+            text-align: right;
+          }
+          .project-scene .project-copy h3 { display: none; }
+          .project-scene .project-copy p {
+            margin: 0;
+            max-width: none;
+            font-size: .72rem;
+            line-height: 1.25;
+            letter-spacing: .08em;
+            font-weight: 900;
+          }
+          .project-scene .term-rail { display: none; }
+          .finale-copy {
+            left: auto;
+            right: 22px;
+            bottom: 25%;
+            width: min(34vw, 520px);
+            max-width: none;
+          }
+          .finale-companies {
+            left: 22px;
+            right: 22px;
+            bottom: 132px;
+            width: auto;
+            text-align: left;
+          }
+        }
+      `}</style>
       <div className="procedural-grid" aria-hidden="true"><i /><i /><i /><i /><i /><i /></div>
       <header className="site-header"><a href="#top" className="brand-mark" aria-label="Inicio">CNSRC<span>™</span></a><div className="header-axis" aria-hidden="true"><span /></div><a href="#contacto" className="header-link">HABLEMOS <span>↘</span></a></header>
 
