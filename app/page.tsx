@@ -104,8 +104,6 @@ export default function Home() {
           .fromTo(".hero-rule", { scaleX: 0 }, { scaleX: 1, duration: 1.2, ease: "none" }, 0);
       }
 
-      // This is the original scene system used by the company sections.
-      // Projects now use this exact same DOM contract and therefore this exact same timeline.
       gsap.utils.toArray<HTMLElement>("[data-kinetic]").forEach((section, sectionIndex) => {
         const chars = section.querySelectorAll(".char");
         const mediaBands = section.querySelectorAll(".media-band");
@@ -214,7 +212,7 @@ export default function Home() {
       <section className="cases scene-light" aria-labelledby="cases-title">
         <div className="cases-head"><div className="scene-index dark-index">CASOS / MARCOS ABIERTOS <span>03</span></div><h2 id="cases-title" style={{ fontSize: "clamp(5rem, 15vw, 15rem)", lineHeight: 0.78, whiteSpace: "nowrap" }}><KineticText>PROYECTOS</KineticText></h2></div>
         {cases.map((project) => (
-          <article className="company-scene kinetic-scene project-scene" data-kinetic key={project.number}>
+          <article className="company-scene kinetic-scene project-scene" data-kinetic key={project.number} style={{ color: "var(--paper)", borderTop: "1px solid var(--line-dark)" }}>
             <div className="sticky-stage company-stage">
               <div className="company-media" aria-hidden="true">
                 {[0, 1, 2, 3, 4].map((band) => (
@@ -222,7 +220,7 @@ export default function Home() {
                 ))}
               </div>
               <div className="scene-index">PROYECTO {project.number} <span>{project.number}—03</span></div>
-              <h2 className="company-name project-name"><KineticText>{project.title}</KineticText></h2>
+              <h2 className="company-name project-name" style={{ whiteSpace: "normal" }}><KineticText>{project.title}</KineticText></h2>
               <div className="company-copy project-copy"><h3>PROYECTO {project.number}</h3><p>{project.tags}</p></div>
               <div className="term-rail"><span>{project.tags}</span><span aria-hidden="true">{project.tags}</span></div>
             </div>
