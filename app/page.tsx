@@ -91,6 +91,30 @@ export default function Home() {
         timeline.to(chars, { rotateX: -78, scaleY: 0.18, opacity: 0.1, stagger: { each: 0.008, from: "edges" }, duration: 0.65, ease: "power2.in" }, 1.62);
       });
 
+      const convergenceIntro = root.current?.querySelector<HTMLElement>(".convergence-intro");
+      if (convergenceIntro) {
+        const chars = convergenceIntro.querySelectorAll(".char");
+        const convergenceTimeline = gsap.timeline({
+          scrollTrigger: {
+            trigger: convergenceIntro,
+            start: "top 78%",
+            end: "bottom 18%",
+            scrub: 1,
+          },
+        });
+        convergenceTimeline.fromTo(
+          chars,
+          { rotateY: -88, scaleX: 0.2, opacity: 0.12 },
+          { rotateY: 0, scaleX: 1, opacity: 1, stagger: { each: 0.012, from: "center" }, duration: 0.8, ease: "power3.out" },
+          0,
+        );
+        convergenceTimeline.to(
+          chars,
+          { rotateX: -78, scaleY: 0.18, opacity: 0.1, stagger: { each: 0.008, from: "edges" }, duration: 0.65, ease: "power2.in" },
+          1.62,
+        );
+      }
+
       gsap.utils.toArray<HTMLElement>(".combo-line").forEach((line, index) => { gsap.fromTo(line.querySelectorAll(".char"), { rotateX: 88, scaleY: 0.1, opacity: 0.08 }, { rotateX: 0, scaleY: 1, opacity: 1, stagger: { each: 0.01, from: index % 2 ? "edges" : "center" }, scrollTrigger: { trigger: line, start: "top 82%", end: "center 48%", scrub: 0.8 } }); });
       gsap.utils.toArray<HTMLElement>(".capability-line").forEach((line, index) => { gsap.fromTo(line.querySelectorAll(".char"), { rotateY: index % 2 ? 84 : -84, opacity: 0.08, scaleX: 0.15 }, { rotateY: 0, opacity: 1, scaleX: 1, stagger: { each: 0.008, from: "center" }, scrollTrigger: { trigger: line, start: "top 78%", end: "center 46%", scrub: true } }); });
     }, root);
