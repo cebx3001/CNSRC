@@ -23,18 +23,18 @@ type SceneProfile = {
 };
 
 const SCENE_PROFILES: Record<AudioScene, SceneProfile> = {
-  hero: { frequency: 46, air: 0.082, shimmer: 0.022, resonance: 0.7, gesture: "material" },
-  sum: { frequency: 52, air: 0.078, shimmer: 0.021, resonance: 1.2, gesture: "integrated" },
-  b2w: { frequency: 62, air: 0.07, shimmer: 0.019, resonance: 2.4, gesture: "signal" },
-  monarca: { frequency: 43, air: 0.086, shimmer: 0.022, resonance: 1.1, gesture: "physical" },
-  brown: { frequency: 55, air: 0.094, shimmer: 0.026, resonance: 4.2, gesture: "spatial" },
-  tridifect: { frequency: 38, air: 0.078, shimmer: 0.02, resonance: 1.8, gesture: "material" },
-  convergence: { frequency: 48, air: 0.092, shimmer: 0.026, resonance: 3.4, gesture: "integrated" },
-  capacity: { frequency: 44, air: 0.076, shimmer: 0.019, resonance: 1.4, gesture: "signal" },
-  "project-mall": { frequency: 41, air: 0.09, shimmer: 0.024, resonance: 2.2, gesture: "project" },
-  "project-campaign": { frequency: 47, air: 0.094, shimmer: 0.026, resonance: 1.7, gesture: "project" },
-  "project-corporate": { frequency: 39, air: 0.088, shimmer: 0.024, resonance: 3.1, gesture: "project" },
-  finale: { frequency: 36, air: 0.074, shimmer: 0.018, resonance: 3.8, gesture: "finale" },
+  hero: { frequency: 46, air: 0.026, shimmer: 0.014, resonance: 0.7, gesture: "material" },
+  sum: { frequency: 52, air: 0.024, shimmer: 0.013, resonance: 1.2, gesture: "integrated" },
+  b2w: { frequency: 62, air: 0.021, shimmer: 0.012, resonance: 2.4, gesture: "signal" },
+  monarca: { frequency: 43, air: 0.027, shimmer: 0.014, resonance: 1.1, gesture: "physical" },
+  brown: { frequency: 55, air: 0.032, shimmer: 0.016, resonance: 4.2, gesture: "spatial" },
+  tridifect: { frequency: 38, air: 0.024, shimmer: 0.012, resonance: 1.8, gesture: "material" },
+  convergence: { frequency: 48, air: 0.03, shimmer: 0.016, resonance: 3.4, gesture: "integrated" },
+  capacity: { frequency: 44, air: 0.023, shimmer: 0.012, resonance: 1.4, gesture: "signal" },
+  "project-mall": { frequency: 41, air: 0.029, shimmer: 0.015, resonance: 2.2, gesture: "project" },
+  "project-campaign": { frequency: 47, air: 0.03, shimmer: 0.016, resonance: 1.7, gesture: "project" },
+  "project-corporate": { frequency: 39, air: 0.028, shimmer: 0.015, resonance: 3.1, gesture: "project" },
+  finale: { frequency: 36, air: 0.022, shimmer: 0.011, resonance: 3.8, gesture: "finale" },
 };
 
 const clamp = (value: number, min = 0, max = 1) => Math.min(max, Math.max(min, value));
@@ -57,6 +57,7 @@ export class CnsrcAudioEngine {
   private currentScene: AudioScene = "hero";
   private lastSceneProgress = 0;
   private lastGestureAt = 0;
+  private lastCueAt = 0;
   private lastGlobalProgress = 0;
   private reducedMotion = false;
 
@@ -70,7 +71,7 @@ export class CnsrcAudioEngine {
     const now = this.context.currentTime;
     this.master.gain.cancelScheduledValues(now);
     this.master.gain.setValueAtTime(this.master.gain.value, now);
-    this.master.gain.linearRampToValueAtTime(0.52, now + 0.55);
+    this.master.gain.linearRampToValueAtTime(0.48, now + 0.55);
     this.applyProfile(this.currentScene, 0.7);
 
     if (this.bed) this.bed.gain.setTargetAtTime(0.12, now, 0.45);
@@ -84,7 +85,7 @@ export class CnsrcAudioEngine {
     const now = this.context.currentTime;
     this.master.gain.cancelScheduledValues(now);
     this.master.gain.setValueAtTime(this.master.gain.value, now);
-    this.master.gain.linearRampToValueAtTime(muted ? 0 : 0.52, now + (muted ? 0.22 : 0.5));
+    this.master.gain.linearRampToValueAtTime(muted ? 0 : 0.48, now + (muted ? 0.22 : 0.5));
 
     if (!muted && this.context.state === "suspended") void this.context.resume();
   }
@@ -114,7 +115,7 @@ export class CnsrcAudioEngine {
     const arc = Math.sin(progress * Math.PI);
 
     this.air.gain.setTargetAtTime(
-      profile.air * (0.82 + shapedDensity * 0.28) * (0.88 + calm * 0.12),
+      profile.air * (0.55 + shapedDensity * 0.18) * (0.86 + calm * 0.14),
       now,
       0.5,
     );
@@ -131,14 +132,13 @@ export class CnsrcAudioEngine {
       0.75,
     );
 
-    const crossed = [0.2, 0.55, 0.84].some((threshold) =>
-      (this.lastSceneProgress < threshold && progress >= threshold) ||
-      (this.lastSceneProgress > threshold && progress <= threshold),
-    );
-
-    const gestureGap = speed > 0.62 ? 900 : 620;
-    if (crossed && performance.now() - this.lastGestureAt > gestureGap) {
-      this.triggerGesture(profile.gesture, this.reducedMotion ? 0.22 : 0.26 + shapedDensity * 0.14);
+    if (scene === "hero") {
+      const cueThresholds = [0.06, 0.25, 0.44, 0.63, 0.82];
+      const cueIndex = cueThresholds.findIndex((threshold) =>
+        (this.lastSceneProgress < threshold && progress >= threshold) ||
+        (this.lastSceneProgress > threshold && progress <= threshold),
+      );
+      if (cueIndex >= 0 && performance.now() - this.lastCueAt > 180) this.triggerCue("text", cueIndex);
     }
 
     this.lastSceneProgress = progress;
@@ -156,8 +156,8 @@ export class CnsrcAudioEngine {
     this.applyProfile(scene, 1.35);
 
     const profile = SCENE_PROFILES[scene];
-    const intensity = scene === "convergence" || scene === "finale" ? 0.38 : 0.3;
-    this.triggerGesture(profile.gesture, intensity);
+    this.triggerCue("section");
+    this.triggerGesture(profile.gesture, 0.13);
   }
 
   destroy() {
@@ -245,11 +245,11 @@ export class CnsrcAudioEngine {
     this.modulationOscillators.push(bedPanLfo);
 
     const airNoise = context.createBufferSource();
-    airNoise.buffer = this.createAmbientNoise(context, 5, 0.34);
+    airNoise.buffer = this.createAmbientNoise(context, 5, 0.18);
     airNoise.loop = true;
     const airFilter = context.createBiquadFilter();
     airFilter.type = "bandpass";
-    airFilter.frequency.value = 1050;
+    airFilter.frequency.value = 860;
     airFilter.Q.value = 0.55;
     const airPanner = context.createStereoPanner();
     const air = context.createGain();
@@ -260,7 +260,7 @@ export class CnsrcAudioEngine {
     this.airFilter = airFilter;
 
     const shimmerNoise = context.createBufferSource();
-    shimmerNoise.buffer = this.createAmbientNoise(context, 5, 0.58);
+    shimmerNoise.buffer = this.createAmbientNoise(context, 5, 0.42);
     shimmerNoise.loop = true;
     const shimmerFilter = context.createBiquadFilter();
     shimmerFilter.type = "highpass";
@@ -322,6 +322,36 @@ export class CnsrcAudioEngine {
     }
   }
 
+  private triggerCue(kind: "text" | "section", index = 0) {
+    if (!this.enabled || !this.context || !this.master) return;
+    this.lastCueAt = performance.now();
+    const context = this.context;
+    const now = context.currentTime;
+    const profile = SCENE_PROFILES[this.currentScene];
+    const oscillator = context.createOscillator();
+    const filter = context.createBiquadFilter();
+    const gain = context.createGain();
+    const panner = context.createStereoPanner();
+    const pattern = [0, 92, 38, 126, 64];
+    const base = clamp(profile.frequency * 12.5, 540, 780);
+    const frequency = kind === "section" ? Math.max(480, base - 70) : Math.min(930, base + pattern[index % pattern.length]);
+    oscillator.type = "sine";
+    oscillator.frequency.setValueAtTime(frequency, now);
+    filter.type = "bandpass";
+    filter.frequency.value = frequency;
+    filter.Q.value = 3.2;
+    panner.pan.value = kind === "section" ? 0 : (index % 2 ? 0.08 : -0.08);
+    const level = kind === "section" ? 0.034 : 0.045;
+    const duration = kind === "section" ? 0.095 : 0.075;
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.exponentialRampToValueAtTime(level, now + 0.006);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+    oscillator.connect(filter).connect(gain).connect(panner).connect(this.master);
+    if (this.reverbSend) panner.connect(this.reverbSend);
+    oscillator.start(now);
+    oscillator.stop(now + duration + 0.025);
+  }
+
   private triggerGesture(type: GestureType, intensity: number) {
     if (!this.enabled || !this.context || !this.master) return;
 
@@ -329,7 +359,7 @@ export class CnsrcAudioEngine {
     const context = this.context;
     const now = context.currentTime;
     const profile = SCENE_PROFILES[this.currentScene];
-    const level = clamp(intensity, 0.12, 0.55) * 0.045;
+    const level = clamp(intensity, 0.12, 0.55) * 0.016;
 
     const multipliers: Record<GestureType, number> = {
       signal: 7.4,
