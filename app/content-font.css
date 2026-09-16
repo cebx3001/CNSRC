@@ -48,7 +48,7 @@
   font-weight: 500;
 }
 
-/* SYSTEMA CONJUNTO: one company becomes the blue active current as the pinned scene advances. */
+/* SISTEMA CONJUNTO: one company becomes the blue active current as the pinned scene advances. */
 .company-weave span {
   color: var(--ink);
 }
@@ -218,6 +218,30 @@
 
   .company-copy p > span {
     font-size: .72rem;
+  }
+
+  /* Mobile story safety: all future steps start hidden so paragraphs cannot stack before GSAP reaches them. */
+  .company-story .story-step {
+    opacity: 0;
+    pointer-events: none;
+    will-change: opacity, transform;
+  }
+
+  .company-story .story-step:first-child {
+    opacity: 1;
+  }
+
+  /* Keep photography materially present on the small viewport while preserving the existing band animation. */
+  .company-media {
+    opacity: .82;
+  }
+
+  .company-media .media-band::after {
+    background: linear-gradient(180deg, rgba(8,9,10,.02), rgba(8,9,10,.52));
+  }
+
+  .project-scene .company-media .media-band::after {
+    background: linear-gradient(180deg, rgba(240,239,233,.04), rgba(240,239,233,.28));
   }
 
   .editorial-statement {
