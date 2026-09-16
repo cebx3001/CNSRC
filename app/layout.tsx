@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import "./content-font.css";
 
 export const metadata: Metadata = {
   title: "CNSRC — Capacidad integrada",
