@@ -12,26 +12,29 @@ export type AudioScene =
   | "project-corporate"
   | "finale";
 
+type GestureType = "signal" | "physical" | "spatial" | "material" | "integrated" | "project" | "finale";
+
 type SceneProfile = {
   frequency: number;
   air: number;
+  shimmer: number;
   resonance: number;
-  gesture: "signal" | "physical" | "spatial" | "material" | "integrated" | "project" | "finale";
+  gesture: GestureType;
 };
 
 const SCENE_PROFILES: Record<AudioScene, SceneProfile> = {
-  hero: { frequency: 46, air: 0.024, resonance: 0.7, gesture: "material" },
-  sum: { frequency: 52, air: 0.022, resonance: 1.2, gesture: "integrated" },
-  b2w: { frequency: 62, air: 0.018, resonance: 2.4, gesture: "signal" },
-  monarca: { frequency: 43, air: 0.026, resonance: 1.1, gesture: "physical" },
-  brown: { frequency: 55, air: 0.032, resonance: 4.2, gesture: "spatial" },
-  tridifect: { frequency: 38, air: 0.022, resonance: 1.8, gesture: "material" },
-  convergence: { frequency: 48, air: 0.03, resonance: 3.4, gesture: "integrated" },
-  capacity: { frequency: 44, air: 0.02, resonance: 1.4, gesture: "signal" },
-  "project-mall": { frequency: 41, air: 0.03, resonance: 2.2, gesture: "project" },
-  "project-campaign": { frequency: 47, air: 0.034, resonance: 1.7, gesture: "project" },
-  "project-corporate": { frequency: 39, air: 0.03, resonance: 3.1, gesture: "project" },
-  finale: { frequency: 36, air: 0.018, resonance: 3.8, gesture: "finale" },
+  hero: { frequency: 46, air: 0.082, shimmer: 0.022, resonance: 0.7, gesture: "material" },
+  sum: { frequency: 52, air: 0.078, shimmer: 0.021, resonance: 1.2, gesture: "integrated" },
+  b2w: { frequency: 62, air: 0.07, shimmer: 0.019, resonance: 2.4, gesture: "signal" },
+  monarca: { frequency: 43, air: 0.086, shimmer: 0.022, resonance: 1.1, gesture: "physical" },
+  brown: { frequency: 55, air: 0.094, shimmer: 0.026, resonance: 4.2, gesture: "spatial" },
+  tridifect: { frequency: 38, air: 0.078, shimmer: 0.02, resonance: 1.8, gesture: "material" },
+  convergence: { frequency: 48, air: 0.092, shimmer: 0.026, resonance: 3.4, gesture: "integrated" },
+  capacity: { frequency: 44, air: 0.076, shimmer: 0.019, resonance: 1.4, gesture: "signal" },
+  "project-mall": { frequency: 41, air: 0.09, shimmer: 0.024, resonance: 2.2, gesture: "project" },
+  "project-campaign": { frequency: 47, air: 0.094, shimmer: 0.026, resonance: 1.7, gesture: "project" },
+  "project-corporate": { frequency: 39, air: 0.088, shimmer: 0.024, resonance: 3.1, gesture: "project" },
+  finale: { frequency: 36, air: 0.074, shimmer: 0.018, resonance: 3.8, gesture: "finale" },
 };
 
 const clamp = (value: number, min = 0, max = 1) => Math.min(max, Math.max(min, value));
@@ -49,7 +52,7 @@ export class CnsrcAudioEngine {
   private delaySend: GainNode | null = null;
   private oscillators: OscillatorNode[] = [];
   private modulationOscillators: OscillatorNode[] = [];
-  private noise: AudioBufferSourceNode | null = null;
+  private noises: AudioBufferSourceNode[] = [];
   private enabled = false;
   private currentScene: AudioScene = "hero";
   private lastSceneProgress = 0;
@@ -60,35 +63,43 @@ export class CnsrcAudioEngine {
   async start() {
     if (!this.context) this.createGraph();
     if (!this.context || !this.master) return;
+
     await this.context.resume();
     this.enabled = true;
+
     const now = this.context.currentTime;
     this.master.gain.cancelScheduledValues(now);
     this.master.gain.setValueAtTime(this.master.gain.value, now);
-    this.master.gain.linearRampToValueAtTime(0.38, now + 0.8);
-    this.applyProfile(this.currentScene, 1.1);
+    this.master.gain.linearRampToValueAtTime(0.52, now + 0.55);
+    this.applyProfile(this.currentScene, 0.7);
+
+    if (this.bed) this.bed.gain.setTargetAtTime(0.12, now, 0.45);
+    if (this.shimmer) this.shimmer.gain.setTargetAtTime(SCENE_PROFILES[this.currentScene].shimmer, now, 0.65);
   }
 
   setMuted(muted: boolean) {
     if (!this.context || !this.master) return;
+
     this.enabled = !muted;
     const now = this.context.currentTime;
     this.master.gain.cancelScheduledValues(now);
     this.master.gain.setValueAtTime(this.master.gain.value, now);
-    this.master.gain.linearRampToValueAtTime(muted ? 0 : 0.38, now + (muted ? 0.28 : 0.7));
+    this.master.gain.linearRampToValueAtTime(muted ? 0 : 0.52, now + (muted ? 0.22 : 0.5));
+
     if (!muted && this.context.state === "suspended") void this.context.resume();
   }
 
   setGlobalState(progress: number, velocity: number) {
     if (!this.enabled || !this.context || !this.bedFilter || !this.airFilter || !this.shimmerFilter) return;
+
     const now = this.context.currentTime;
     const speed = clamp(Math.abs(velocity) / 2800);
     const direction = progress >= this.lastGlobalProgress ? 1 : -1;
     this.lastGlobalProgress = progress;
 
-    this.bedFilter.frequency.setTargetAtTime(210 + speed * 420 + progress * 120, now, 0.5);
-    this.airFilter.frequency.setTargetAtTime(760 + speed * 900 + (direction > 0 ? 80 : 0), now, 0.4);
-    this.shimmerFilter.frequency.setTargetAtTime(1850 + speed * 1700 + progress * 350, now, 0.6);
+    this.bedFilter.frequency.setTargetAtTime(420 + speed * 520 + progress * 170, now, 0.4);
+    this.airFilter.frequency.setTargetAtTime(850 + speed * 950 + (direction > 0 ? 100 : 0), now, 0.36);
+    this.shimmerFilter.frequency.setTargetAtTime(2100 + speed * 1500 + progress * 420, now, 0.5);
   }
 
   setSceneState(scene: AudioScene, progress: number, velocity: number, density: number) {
@@ -100,32 +111,36 @@ export class CnsrcAudioEngine {
     const speed = clamp(Math.abs(velocity) / 2400);
     const calm = 1 - speed;
     const shapedDensity = clamp(density);
-    const breathing = 0.5 + Math.sin(progress * Math.PI) * 0.5;
+    const arc = Math.sin(progress * Math.PI);
 
     this.air.gain.setTargetAtTime(
-      profile.air * (0.72 + shapedDensity * 0.38) * (0.78 + calm * 0.22),
+      profile.air * (0.82 + shapedDensity * 0.28) * (0.88 + calm * 0.12),
       now,
-      0.55,
-    );
-    this.bed.gain.setTargetAtTime(
-      0.082 + shapedDensity * 0.032 + breathing * 0.01 - speed * 0.01,
-      now,
-      0.7,
-    );
-    this.shimmer.gain.setTargetAtTime(
-      0.018 + shapedDensity * 0.018 + calm * 0.006,
-      now,
-      0.9,
+      0.5,
     );
 
-    const crossed = [0.22, 0.58, 0.86].some((threshold) =>
+    this.bed.gain.setTargetAtTime(
+      0.105 + shapedDensity * 0.032 + arc * 0.012 - speed * 0.008,
+      now,
+      0.6,
+    );
+
+    this.shimmer.gain.setTargetAtTime(
+      profile.shimmer * (0.86 + shapedDensity * 0.32 + calm * 0.08),
+      now,
+      0.75,
+    );
+
+    const crossed = [0.2, 0.55, 0.84].some((threshold) =>
       (this.lastSceneProgress < threshold && progress >= threshold) ||
       (this.lastSceneProgress > threshold && progress <= threshold),
     );
-    const gestureGap = speed > 0.62 ? 1000 : 700;
+
+    const gestureGap = speed > 0.62 ? 900 : 620;
     if (crossed && performance.now() - this.lastGestureAt > gestureGap) {
-      this.triggerGesture(profile.gesture, this.reducedMotion ? 0.16 : 0.18 + shapedDensity * 0.12);
+      this.triggerGesture(profile.gesture, this.reducedMotion ? 0.22 : 0.26 + shapedDensity * 0.14);
     }
+
     this.lastSceneProgress = progress;
   }
 
@@ -135,19 +150,20 @@ export class CnsrcAudioEngine {
       return;
     }
     if (scene === this.currentScene) return;
+
     this.currentScene = scene;
     this.lastSceneProgress = 0;
-    this.applyProfile(scene, 1.8);
+    this.applyProfile(scene, 1.35);
 
     const profile = SCENE_PROFILES[scene];
-    const intensity = scene === "convergence" || scene === "finale" ? 0.24 : 0.16;
+    const intensity = scene === "convergence" || scene === "finale" ? 0.38 : 0.3;
     this.triggerGesture(profile.gesture, intensity);
   }
 
   destroy() {
     this.oscillators.forEach((oscillator) => oscillator.stop());
     this.modulationOscillators.forEach((oscillator) => oscillator.stop());
-    this.noise?.stop();
+    this.noises.forEach((noise) => noise.stop());
     void this.context?.close();
     this.context = null;
   }
@@ -162,56 +178,59 @@ export class CnsrcAudioEngine {
     const master = context.createGain();
     const compressor = context.createDynamicsCompressor();
     master.gain.value = 0;
-    compressor.threshold.value = -24;
-    compressor.knee.value = 16;
-    compressor.ratio.value = 2.5;
-    compressor.attack.value = 0.025;
-    compressor.release.value = 0.6;
+    compressor.threshold.value = -20;
+    compressor.knee.value = 14;
+    compressor.ratio.value = 2.2;
+    compressor.attack.value = 0.03;
+    compressor.release.value = 0.5;
     master.connect(compressor).connect(context.destination);
     this.master = master;
 
     const reverb = context.createConvolver();
-    reverb.buffer = this.createImpulseResponse(context, 3.8, 2.2);
+    reverb.buffer = this.createImpulseResponse(context, 3.2, 2.5);
     const reverbReturn = context.createGain();
-    reverbReturn.gain.value = 0.34;
+    reverbReturn.gain.value = 0.18;
     reverb.connect(reverbReturn).connect(master);
+
     const reverbSend = context.createGain();
-    reverbSend.gain.value = 0.62;
+    reverbSend.gain.value = 0.24;
     reverbSend.connect(reverb);
     this.reverbSend = reverbSend;
 
-    const delay = context.createDelay(1.2);
-    delay.delayTime.value = 0.31;
+    const delay = context.createDelay(0.8);
+    delay.delayTime.value = 0.24;
     const delayFeedback = context.createGain();
-    delayFeedback.gain.value = 0.18;
+    delayFeedback.gain.value = 0.12;
     const delayReturn = context.createGain();
-    delayReturn.gain.value = 0.14;
+    delayReturn.gain.value = 0.07;
     delay.connect(delayFeedback).connect(delay);
     delay.connect(delayReturn).connect(master);
+
     const delaySend = context.createGain();
-    delaySend.gain.value = 0.28;
+    delaySend.gain.value = 0.13;
     delaySend.connect(delay);
     this.delaySend = delaySend;
 
     const bedFilter = context.createBiquadFilter();
     bedFilter.type = "lowpass";
-    bedFilter.frequency.value = 260;
+    bedFilter.frequency.value = 520;
     bedFilter.Q.value = 0.55;
     const bedPanner = context.createStereoPanner();
     const bed = context.createGain();
-    bed.gain.value = 0.09;
+    bed.gain.value = 0.12;
     bedFilter.connect(bedPanner).connect(bed).connect(master);
     bed.connect(reverbSend);
-    bed.connect(delaySend);
     this.bedFilter = bedFilter;
     this.bed = bed;
 
-    [1, 1.498, 2.01].forEach((ratio, index) => {
+    const bedRatios = [1, 1.5, 2.01, 4.02, 6.03];
+    const bedLevels = [0.3, 0.14, 0.09, 0.055, 0.035];
+    bedRatios.forEach((ratio, index) => {
       const oscillator = context.createOscillator();
-      oscillator.type = index === 0 ? "sine" : index === 1 ? "triangle" : "sine";
+      oscillator.type = index === 1 ? "triangle" : "sine";
       oscillator.frequency.value = SCENE_PROFILES.hero.frequency * ratio;
       const gain = context.createGain();
-      gain.gain.value = index === 0 ? 0.3 : index === 1 ? 0.13 : 0.07;
+      gain.gain.value = bedLevels[index];
       oscillator.connect(gain).connect(bedFilter);
       oscillator.start();
       this.oscillators.push(oscillator);
@@ -219,43 +238,38 @@ export class CnsrcAudioEngine {
 
     const bedPanLfo = context.createOscillator();
     const bedPanDepth = context.createGain();
-    bedPanLfo.frequency.value = 0.035;
-    bedPanDepth.gain.value = 0.68;
+    bedPanLfo.frequency.value = 0.028;
+    bedPanDepth.gain.value = 0.52;
     bedPanLfo.connect(bedPanDepth).connect(bedPanner.pan);
     bedPanLfo.start();
     this.modulationOscillators.push(bedPanLfo);
 
-    const noiseBuffer = context.createBuffer(1, context.sampleRate * 4, context.sampleRate);
-    const data = noiseBuffer.getChannelData(0);
-    let previous = 0;
-    for (let index = 0; index < data.length; index += 1) {
-      previous = previous * 0.992 + (Math.random() * 2 - 1) * 0.008;
-      data[index] = previous;
-    }
-    const noise = context.createBufferSource();
-    noise.buffer = noiseBuffer;
-    noise.loop = true;
-
+    const airNoise = context.createBufferSource();
+    airNoise.buffer = this.createAmbientNoise(context, 5, 0.34);
+    airNoise.loop = true;
     const airFilter = context.createBiquadFilter();
     airFilter.type = "bandpass";
-    airFilter.frequency.value = 920;
-    airFilter.Q.value = 0.5;
+    airFilter.frequency.value = 1050;
+    airFilter.Q.value = 0.55;
     const airPanner = context.createStereoPanner();
     const air = context.createGain();
-    air.gain.value = 0;
-    noise.connect(airFilter).connect(airPanner).connect(air).connect(master);
+    air.gain.value = SCENE_PROFILES.hero.air;
+    airNoise.connect(airFilter).connect(airPanner).connect(air).connect(master);
     air.connect(reverbSend);
     this.air = air;
     this.airFilter = airFilter;
 
+    const shimmerNoise = context.createBufferSource();
+    shimmerNoise.buffer = this.createAmbientNoise(context, 5, 0.58);
+    shimmerNoise.loop = true;
     const shimmerFilter = context.createBiquadFilter();
     shimmerFilter.type = "highpass";
-    shimmerFilter.frequency.value = 2200;
-    shimmerFilter.Q.value = 0.35;
+    shimmerFilter.frequency.value = 2300;
+    shimmerFilter.Q.value = 0.38;
     const shimmerPanner = context.createStereoPanner();
     const shimmer = context.createGain();
-    shimmer.gain.value = 0.018;
-    noise.connect(shimmerFilter).connect(shimmerPanner).connect(shimmer).connect(master);
+    shimmer.gain.value = SCENE_PROFILES.hero.shimmer;
+    shimmerNoise.connect(shimmerFilter).connect(shimmerPanner).connect(shimmer).connect(master);
     shimmer.connect(reverbSend);
     shimmer.connect(delaySend);
     this.shimmer = shimmer;
@@ -263,62 +277,78 @@ export class CnsrcAudioEngine {
 
     const airPanLfo = context.createOscillator();
     const airPanDepth = context.createGain();
-    airPanLfo.frequency.value = 0.052;
-    airPanDepth.gain.value = 0.8;
+    airPanLfo.frequency.value = 0.043;
+    airPanDepth.gain.value = 0.65;
     airPanLfo.connect(airPanDepth).connect(airPanner.pan);
     airPanLfo.start();
     this.modulationOscillators.push(airPanLfo);
 
     const shimmerPanLfo = context.createOscillator();
     const shimmerPanDepth = context.createGain();
-    shimmerPanLfo.frequency.value = 0.021;
-    shimmerPanDepth.gain.value = -0.72;
+    shimmerPanLfo.frequency.value = 0.019;
+    shimmerPanDepth.gain.value = -0.58;
     shimmerPanLfo.connect(shimmerPanDepth).connect(shimmerPanner.pan);
     shimmerPanLfo.start();
     this.modulationOscillators.push(shimmerPanLfo);
 
-    noise.start();
-    this.noise = noise;
+    airNoise.start();
+    shimmerNoise.start();
+    this.noises.push(airNoise, shimmerNoise);
   }
 
   private applyProfile(scene: AudioScene, glide: number) {
-    if (!this.context || !this.bedFilter || !this.airFilter || !this.shimmerFilter || !this.air) return;
+    if (!this.context || !this.bedFilter || !this.airFilter || !this.shimmerFilter || !this.air || !this.shimmer) return;
+
     const now = this.context.currentTime;
     const profile = SCENE_PROFILES[scene];
+    const ratios = [1, 1.5, 2.01, 4.02, 6.03];
+
     this.oscillators.forEach((oscillator, index) => {
-      const ratios = [1, 1.498, 2.01];
       oscillator.frequency.cancelScheduledValues(now);
       oscillator.frequency.setTargetAtTime(profile.frequency * ratios[index], now, glide);
     });
-    this.bedFilter.Q.setTargetAtTime(0.5 + profile.resonance * 0.12, now, glide * 0.8);
-    this.airFilter.Q.setTargetAtTime(0.45 + profile.resonance * 0.1, now, glide * 0.8);
-    this.shimmerFilter.Q.setTargetAtTime(0.3 + profile.resonance * 0.05, now, glide);
+
+    this.bedFilter.Q.setTargetAtTime(0.5 + profile.resonance * 0.1, now, glide * 0.7);
+    this.airFilter.Q.setTargetAtTime(0.48 + profile.resonance * 0.08, now, glide * 0.7);
+    this.shimmerFilter.Q.setTargetAtTime(0.32 + profile.resonance * 0.045, now, glide);
     this.air.gain.setTargetAtTime(profile.air, now, glide);
+    this.shimmer.gain.setTargetAtTime(profile.shimmer, now, glide);
 
     if (this.reverbSend) {
-      this.reverbSend.gain.setTargetAtTime(0.54 + clamp(profile.resonance / 6) * 0.26, now, glide);
+      this.reverbSend.gain.setTargetAtTime(0.2 + clamp(profile.resonance / 6) * 0.12, now, glide);
     }
     if (this.delaySend) {
-      this.delaySend.gain.setTargetAtTime(0.18 + clamp(profile.resonance / 7) * 0.16, now, glide);
+      this.delaySend.gain.setTargetAtTime(0.1 + clamp(profile.resonance / 7) * 0.08, now, glide);
     }
   }
 
-  private triggerGesture(type: SceneProfile["gesture"], intensity: number) {
+  private triggerGesture(type: GestureType, intensity: number) {
     if (!this.enabled || !this.context || !this.master) return;
+
     this.lastGestureAt = performance.now();
     const context = this.context;
     const now = context.currentTime;
-    const level = clamp(intensity, 0.08, 0.32) * 0.024;
     const profile = SCENE_PROFILES[this.currentScene];
+    const level = clamp(intensity, 0.12, 0.55) * 0.045;
 
-    const baseMultipliers: Record<SceneProfile["gesture"], number> = {
-      signal: 8.2,
-      physical: 5.1,
-      spatial: 10.5,
-      material: 4.2,
-      integrated: 6.8,
-      project: 5.8,
-      finale: 3.7,
+    const multipliers: Record<GestureType, number> = {
+      signal: 7.4,
+      physical: 4.6,
+      spatial: 9.2,
+      material: 3.8,
+      integrated: 6.1,
+      project: 5.2,
+      finale: 3.4,
+    };
+
+    const durations: Record<GestureType, number> = {
+      signal: 0.11,
+      physical: 0.16,
+      spatial: 0.2,
+      material: 0.15,
+      integrated: 0.18,
+      project: 0.16,
+      finale: 0.24,
     };
 
     const oscillator = context.createOscillator();
@@ -326,16 +356,18 @@ export class CnsrcAudioEngine {
     const gain = context.createGain();
     const panner = context.createStereoPanner();
 
-    oscillator.type = "sine";
-    oscillator.frequency.value = Math.max(110, Math.min(980, profile.frequency * baseMultipliers[type]));
-    filter.type = "bandpass";
-    filter.frequency.value = oscillator.frequency.value;
-    filter.Q.value = type === "signal" ? 2.1 : 1.1;
-    panner.pan.value = type === "spatial" ? Math.random() * 0.8 - 0.4 : Math.random() * 0.28 - 0.14;
+    const frequency = Math.max(120, Math.min(920, profile.frequency * multipliers[type]));
+    oscillator.type = type === "signal" ? "triangle" : "sine";
+    oscillator.frequency.setValueAtTime(frequency, now);
 
-    const duration = type === "finale" ? 0.18 : type === "spatial" ? 0.14 : 0.085;
+    filter.type = "bandpass";
+    filter.frequency.value = frequency;
+    filter.Q.value = type === "signal" ? 1.7 : 0.9;
+    panner.pan.value = type === "spatial" ? Math.random() * 0.9 - 0.45 : Math.random() * 0.34 - 0.17;
+
+    const duration = durations[type];
     gain.gain.setValueAtTime(0.0001, now);
-    gain.gain.exponentialRampToValueAtTime(level, now + 0.012);
+    gain.gain.exponentialRampToValueAtTime(level, now + 0.016);
     gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
 
     oscillator.connect(filter).connect(gain).connect(panner).connect(this.master);
@@ -344,16 +376,33 @@ export class CnsrcAudioEngine {
     oscillator.stop(now + duration + 0.03);
   }
 
+  private createAmbientNoise(context: AudioContext, seconds: number, brightness: number) {
+    const length = Math.floor(context.sampleRate * seconds);
+    const buffer = context.createBuffer(1, length, context.sampleRate);
+    const data = buffer.getChannelData(0);
+    let smooth = 0;
+
+    for (let index = 0; index < length; index += 1) {
+      const white = Math.random() * 2 - 1;
+      smooth = smooth * 0.9 + white * 0.1;
+      data[index] = smooth * (1 - brightness) + white * brightness * 0.52;
+    }
+
+    return buffer;
+  }
+
   private createImpulseResponse(context: AudioContext, duration: number, decay: number) {
     const length = Math.floor(context.sampleRate * duration);
     const impulse = context.createBuffer(2, length, context.sampleRate);
+
     for (let channel = 0; channel < 2; channel += 1) {
       const data = impulse.getChannelData(channel);
       for (let index = 0; index < length; index += 1) {
         const envelope = Math.pow(1 - index / length, decay);
-        data[index] = (Math.random() * 2 - 1) * envelope * (channel === 0 ? 1 : 0.94);
+        data[index] = (Math.random() * 2 - 1) * envelope * 0.55 * (channel === 0 ? 1 : 0.96);
       }
     }
+
     return impulse;
   }
 }
