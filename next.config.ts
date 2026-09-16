@@ -4,6 +4,7 @@ const repo = "CNSRC";
 const isProd = process.env.NODE_ENV === "production";
 
 const nextConfig: NextConfig = {
+  agentRules: false,
   output: "export",
   trailingSlash: true,
   basePath: isProd ? `/${repo}` : "",
