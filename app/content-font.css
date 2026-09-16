@@ -1,17 +1,13 @@
-@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Russo+One&display=swap');
 
 .hero-deck,
 .sum-copy,
-.company-copy h3,
 .company-copy p,
 .company-copy p > span,
-.editorial-statement,
 .editorial-body,
 .case-copy,
 .case-copy p,
-.project-statement,
 .project-copy,
-.project-copy h3,
 .project-copy p,
 .project-scene .scene-index,
 .project-scene .term-rail,
@@ -26,6 +22,14 @@
   font-family: 'Quicksand', sans-serif;
 }
 
+/* Secondary editorial voice: distinct from both the display titles and the Quicksand body copy. */
+.company-copy h3,
+.editorial-statement,
+.project-statement,
+.project-copy h3 {
+  font-family: 'Russo One', sans-serif;
+}
+
 /* Keep the support copy in the opening system scene subordinate to the large title. */
 .sum-copy {
   width: min(38vw, 560px);
@@ -34,12 +38,12 @@
   font-weight: 500;
 }
 
-/* Company role labels are content, not display titles: larger and clearly readable. */
+/* Company role labels remain readable without competing with the large kinetic names. */
 .company-copy h3 {
   font-size: clamp(.9rem, 1.05vw, 1.05rem);
-  line-height: 1.24;
-  font-weight: 700;
-  letter-spacing: .018em;
+  line-height: 1.2;
+  font-weight: 400;
+  letter-spacing: .012em;
 }
 
 .company-copy p > span {
@@ -49,11 +53,18 @@
   letter-spacing: .08em;
 }
 
+/* Statements use Russo One as the subtitle layer; body copy remains Quicksand. */
+.editorial-statement {
+  font-weight: 400;
+  letter-spacing: -.015em;
+}
+
 /* Projects carry the same editorial reading scale as the preceding content blocks. */
 .project-statement {
   font-size: clamp(1.2rem, 1.8vw, 1.8rem);
-  line-height: 1.22;
-  font-weight: 600;
+  line-height: 1.18;
+  font-weight: 400;
+  letter-spacing: -.018em;
 }
 
 .project-scene .project-copy p {
@@ -64,9 +75,9 @@
 
 .project-scene .project-copy h3 {
   font-size: clamp(.92rem, 1.08vw, 1.08rem);
-  line-height: 1.2;
-  font-weight: 700;
-  letter-spacing: .025em;
+  line-height: 1.16;
+  font-weight: 400;
+  letter-spacing: .01em;
 }
 
 .project-scene .scene-index,
@@ -92,10 +103,10 @@
   transform: translateX(-1.55em);
 }
 
-/* Keep the closing copy clear of the large title and return the CTA divider to the thin-line language. */
+/* Keep the closing copy decisively below the large title and retain the thin-line language. */
 @media (min-width: 821px) {
   .site-shell .finale .finale-copy {
-    top: 64%;
+    top: 70%;
     bottom: auto;
   }
 }
@@ -112,7 +123,7 @@
 
   .company-copy h3 {
     font-size: .88rem;
-    line-height: 1.22;
+    line-height: 1.18;
     max-width: 22rem;
   }
 
@@ -120,9 +131,13 @@
     font-size: .72rem;
   }
 
+  .editorial-statement {
+    line-height: 1.18;
+  }
+
   .project-statement {
     font-size: 1.15rem;
-    line-height: 1.3;
+    line-height: 1.2;
   }
 
   .project-scene .project-copy p {
@@ -144,7 +159,7 @@
   }
 
   .site-shell .finale .finale-copy {
-    top: auto;
-    bottom: 30%;
+    top: 64%;
+    bottom: auto;
   }
 }
