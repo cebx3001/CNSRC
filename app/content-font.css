@@ -1,0 +1,18 @@
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap');
+
+.hero-deck,
+.sum-copy,
+.company-copy p,
+.editorial-statement,
+.editorial-body,
+.case-copy,
+.case-copy p,
+.project-copy,
+.project-copy p,
+.finale-copy,
+.finale-copy p,
+.sound-toggle,
+.header-link,
+.scroll-cue {
+  font-family: 'Quicksand', sans-serif;
+}
