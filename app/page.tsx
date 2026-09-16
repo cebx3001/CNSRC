@@ -486,7 +486,7 @@ export default function Home() {
         ))}
       </section>
 
-      <footer id="contacto" className="finale scene-light kinetic-scene" data-kinetic data-audio-scene="finale"><div className="sticky-stage finale-stage"><div className="scene-index dark-index">SIGUIENTE PROYECTO <span>∞</span></div><h2><KineticText>DE LA ESTRATEGIA A LA IMPLEMENTACIÓN.</KineticText></h2><p className="finale-copy">Una estructura capaz de pensar, producir, desarrollar e implementar proyectos completos.</p><div className="finale-companies">B2W AGENCY · MONARCA / SEVEN STUDIO · DOCTOR BROWN LABS · TRIDIFECT</div><a className="contact-link" href="mailto:proyectos@cnsrc.com"><span>HABLEMOS DE TU PROYECTO</span><span aria-hidden="true">↗</span></a><div className="footer-line"><span>CNSRC / 2026</span><a href="#top">VOLVER ARRIBA ↑</a></div></div></footer>
+      <footer id="contacto" className="finale scene-light kinetic-scene" data-kinetic data-audio-scene="finale"><div className="sticky-stage finale-stage"><div className="scene-index dark-index">SIGUIENTE PROYECTO <span>∞</span></div><h2><KineticText>DE LA ESTRATEGIA A LA IMPLEMENTACIÓN.</KineticText></h2><div className="finale-companies">B2W AGENCY · MONARCA / SEVEN STUDIO · DOCTOR BROWN LABS · TRIDIFECT</div><a className="contact-link" href="mailto:proyectos@cnsrc.com"><span>HABLEMOS DE TU PROYECTO</span><span aria-hidden="true">↗</span></a><div className="footer-line"><span>CNSRC / 2026</span><a href="#top">VOLVER ARRIBA ↑</a></div></div></footer>
     </main>
   );
 }
