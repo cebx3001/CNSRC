@@ -9,5 +9,16 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="es"><body>{children}</body></html>;
+  return (
+    <html lang="es">
+      <body>
+        {children}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(() => { const link = document.querySelector('.contact-link'); if (link) { link.setAttribute('href', 'https://wa.me/593961903245'); link.setAttribute('target', '_blank'); link.setAttribute('rel', 'noopener noreferrer'); } })();`,
+          }}
+        />
+      </body>
+    </html>
+  );
 }
