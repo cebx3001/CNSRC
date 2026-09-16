@@ -28,6 +28,7 @@
 .project-statement,
 .project-copy h3 {
   font-family: 'Russo One', sans-serif;
+  font-weight: 400;
 }
 
 /* Keep the support copy in the opening system scene subordinate to the large title. */
@@ -42,7 +43,6 @@
 .company-copy h3 {
   font-size: clamp(.9rem, 1.05vw, 1.05rem);
   line-height: 1.2;
-  font-weight: 400;
   letter-spacing: .012em;
 }
 
@@ -53,18 +53,18 @@
   letter-spacing: .08em;
 }
 
-/* Statements use Russo One as the subtitle layer; body copy remains Quicksand. */
+/* Russo One is the subtitle voice, but kept deliberately lighter in scale so it does not pull focus from the display titles. */
 .editorial-statement {
-  font-weight: 400;
-  letter-spacing: -.015em;
+  font-size: clamp(1.02rem, 1.34vw, 1.34rem);
+  line-height: 1.24;
+  letter-spacing: -.012em;
 }
 
-/* Projects carry the same editorial reading scale as the preceding content blocks. */
+/* Project statements use the same restrained subtitle scale; the longer body copy remains Quicksand. */
 .project-statement {
-  font-size: clamp(1.2rem, 1.8vw, 1.8rem);
-  line-height: 1.18;
-  font-weight: 400;
-  letter-spacing: -.018em;
+  font-size: clamp(1.02rem, 1.34vw, 1.34rem);
+  line-height: 1.24;
+  letter-spacing: -.012em;
 }
 
 .project-scene .project-copy p {
@@ -76,7 +76,6 @@
 .project-scene .project-copy h3 {
   font-size: clamp(.92rem, 1.08vw, 1.08rem);
   line-height: 1.16;
-  font-weight: 400;
   letter-spacing: .01em;
 }
 
@@ -103,11 +102,18 @@
   transform: translateX(-1.55em);
 }
 
-/* Keep the closing copy decisively below the large title and retain the thin-line language. */
+/* Keep the closing support copy down with the CTA band so it cannot collide with the large title. */
 @media (min-width: 821px) {
   .site-shell .finale .finale-copy {
-    top: 70%;
-    bottom: auto;
+    top: auto;
+    bottom: 128px;
+    left: auto;
+    right: 22px;
+    width: min(31vw, 470px);
+    max-width: none;
+    font-size: clamp(.92rem, 1.05vw, 1.05rem);
+    line-height: 1.3;
+    text-align: right;
   }
 }
 
@@ -132,12 +138,13 @@
   }
 
   .editorial-statement {
-    line-height: 1.18;
+    font-size: 1rem;
+    line-height: 1.24;
   }
 
   .project-statement {
-    font-size: 1.15rem;
-    line-height: 1.2;
+    font-size: 1rem;
+    line-height: 1.24;
   }
 
   .project-scene .project-copy p {
@@ -159,7 +166,14 @@
   }
 
   .site-shell .finale .finale-copy {
-    top: 64%;
-    bottom: auto;
+    top: auto;
+    bottom: 116px;
+    left: 14px;
+    right: 14px;
+    width: auto;
+    max-width: none;
+    font-size: .92rem;
+    line-height: 1.3;
+    text-align: left;
   }
 }
