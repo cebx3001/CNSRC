@@ -56,10 +56,10 @@ const companies = [
   {
     index: "02",
     audioScene: "monarca" as AudioScene,
-    name: "MONARCA / SEVEN STUDIO",
+    name: "MONARCA / 7 STUDIO",
     role: "PRODUCCIÓN, CONTENIDO, EVENTOS Y EJECUCIÓN",
     paragraphs: [
-      "Monarca / Seven Studio es una asociación que reúne capacidades de producción audiovisual, creación de contenidos, producción de eventos y ejecución de proyectos. La integración de ambos equipos permite abordar una producción desde su desarrollo creativo y planificación hasta todo lo necesario para llevarla a cámara, a una plataforma, a un escenario o al espacio público.",
+      "Monarca / 7 Studio es una asociación que reúne capacidades de producción audiovisual, creación de contenidos, producción de eventos y ejecución de proyectos. La integración de ambos equipos permite abordar una producción desde su desarrollo creativo y planificación hasta todo lo necesario para llevarla a cámara, a una plataforma, a un escenario o al espacio público.",
       "Su trabajo comprende comerciales, fotografía, documental, contenidos digitales, motion graphics, streaming y producción multicámara. Esa capacidad audiovisual se conecta con la producción de eventos, activaciones y acciones BTL, coordinando equipos creativos y técnicos, talento, locaciones, proveedores, logística y operación en campo.",
       "La asociación permite trabajar proyectos en los que contenido y ejecución no son procesos separados. Una campaña puede convertirse en producción audiovisual; esa producción puede extenderse hacia un evento o una activación; y todos sus componentes pueden organizarse bajo una misma producción ejecutiva hasta su implementación.",
     ],
@@ -436,7 +436,7 @@ export default function Home() {
           <div className="scene-index dark-index">SISTEMA CONJUNTO <span>01—04</span></div>
           <h2 className="sum-title"><KineticText>UNA ESTRUCTURA MÁS GRANDE QUE LA SUMA DE SUS PARTES.</KineticText></h2>
           <p className="sum-copy scene-statement">Cuatro especialidades diferentes trabajando como una sola estructura. Estrategia y comunicación, producción y ejecución, diseño y desarrollo tecnológico, infraestructura e implementación se integran para abordar cada proyecto como un sistema completo.</p>
-          <div className="company-weave" aria-label="B2W Agency, Monarca / Seven Studio, Doctor Brown Labs y Tridifect"><span>B2W AGENCY</span><span>MONARCA / SEVEN STUDIO</span><span>DOCTOR BROWN LABS</span><span>TRIDIFECT</span></div>
+          <div className="company-weave" aria-label="B2W Agency, Monarca / 7 Studio, Doctor Brown Labs y Tridifect"><span>B2W AGENCY</span><span>MONARCA / 7 STUDIO</span><span>DOCTOR BROWN LABS</span><span>TRIDIFECT</span></div>
           <div className="weave-lines" aria-hidden="true"><i /><i /><i /><i /></div>
         </div>
       </section>
@@ -486,7 +486,7 @@ export default function Home() {
         ))}
       </section>
 
-      <footer id="contacto" className="finale scene-light kinetic-scene" data-kinetic data-audio-scene="finale"><div className="sticky-stage finale-stage"><div className="scene-index dark-index">SIGUIENTE PROYECTO <span>∞</span></div><h2><KineticText>DE LA ESTRATEGIA A LA IMPLEMENTACIÓN.</KineticText></h2><div className="finale-companies">B2W AGENCY · MONARCA / SEVEN STUDIO · DOCTOR BROWN LABS · TRIDIFECT</div><a className="contact-link" href="mailto:proyectos@cnsrc.com"><span>HABLEMOS DE TU PROYECTO</span><span aria-hidden="true">↗</span></a><div className="footer-line"><span>CNSRC / 2026</span><a href="#top">VOLVER ARRIBA ↑</a></div></div></footer>
+      <footer id="contacto" className="finale scene-light kinetic-scene" data-kinetic data-audio-scene="finale"><div className="sticky-stage finale-stage"><div className="scene-index dark-index">SIGUIENTE PROYECTO <span>∞</span></div><h2><KineticText>DE LA ESTRATEGIA A LA IMPLEMENTACIÓN.</KineticText></h2><div className="finale-companies">B2W AGENCY · MONARCA / 7 STUDIO · DOCTOR BROWN LABS · TRIDIFECT</div><a className="contact-link" href="mailto:proyectos@cnsrc.com"><span>HABLEMOS DE TU PROYECTO</span><span aria-hidden="true">↗</span></a><div className="footer-line"><span>CNSRC / 2026</span><a href="#top">VOLVER ARRIBA ↑</a></div></div></footer>
     </main>
   );
 }
