@@ -20,18 +20,18 @@ type SceneProfile = {
 };
 
 const SCENE_PROFILES: Record<AudioScene, SceneProfile> = {
-  hero: { frequency: 46, air: 0.006, resonance: 0.7, gesture: "material" },
-  sum: { frequency: 52, air: 0.004, resonance: 1.2, gesture: "integrated" },
-  b2w: { frequency: 62, air: 0.003, resonance: 2.4, gesture: "signal" },
-  monarca: { frequency: 43, air: 0.006, resonance: 1.1, gesture: "physical" },
-  brown: { frequency: 55, air: 0.008, resonance: 4.2, gesture: "spatial" },
-  tridifect: { frequency: 38, air: 0.004, resonance: 1.8, gesture: "material" },
-  convergence: { frequency: 48, air: 0.007, resonance: 3.4, gesture: "integrated" },
-  capacity: { frequency: 44, air: 0.003, resonance: 1.4, gesture: "signal" },
-  "project-mall": { frequency: 41, air: 0.008, resonance: 2.2, gesture: "project" },
-  "project-campaign": { frequency: 47, air: 0.009, resonance: 1.7, gesture: "project" },
-  "project-corporate": { frequency: 39, air: 0.007, resonance: 3.1, gesture: "project" },
-  finale: { frequency: 36, air: 0.002, resonance: 3.8, gesture: "finale" },
+  hero: { frequency: 46, air: 0.014, resonance: 0.7, gesture: "material" },
+  sum: { frequency: 52, air: 0.011, resonance: 1.2, gesture: "integrated" },
+  b2w: { frequency: 62, air: 0.009, resonance: 2.4, gesture: "signal" },
+  monarca: { frequency: 43, air: 0.014, resonance: 1.1, gesture: "physical" },
+  brown: { frequency: 55, air: 0.018, resonance: 4.2, gesture: "spatial" },
+  tridifect: { frequency: 38, air: 0.011, resonance: 1.8, gesture: "material" },
+  convergence: { frequency: 48, air: 0.016, resonance: 3.4, gesture: "integrated" },
+  capacity: { frequency: 44, air: 0.009, resonance: 1.4, gesture: "signal" },
+  "project-mall": { frequency: 41, air: 0.018, resonance: 2.2, gesture: "project" },
+  "project-campaign": { frequency: 47, air: 0.02, resonance: 1.7, gesture: "project" },
+  "project-corporate": { frequency: 39, air: 0.016, resonance: 3.1, gesture: "project" },
+  finale: { frequency: 36, air: 0.008, resonance: 3.8, gesture: "finale" },
 };
 
 const clamp = (value: number, min = 0, max = 1) => Math.min(max, Math.max(min, value));
@@ -60,9 +60,9 @@ export class CnsrcAudioEngine {
     const now = this.context.currentTime;
     this.master.gain.cancelScheduledValues(now);
     this.master.gain.setValueAtTime(this.master.gain.value, now);
-    this.master.gain.linearRampToValueAtTime(0.16, now + 0.65);
+    this.master.gain.linearRampToValueAtTime(0.34, now + 0.5);
     this.applyProfile(this.currentScene, 0.8);
-    this.triggerGesture("material", 0.3);
+    this.triggerGesture("material", 0.55);
   }
 
   setMuted(muted: boolean) {
@@ -71,7 +71,7 @@ export class CnsrcAudioEngine {
     const now = this.context.currentTime;
     this.master.gain.cancelScheduledValues(now);
     this.master.gain.setValueAtTime(this.master.gain.value, now);
-    this.master.gain.linearRampToValueAtTime(muted ? 0 : 0.16, now + (muted ? 0.28 : 0.55));
+    this.master.gain.linearRampToValueAtTime(muted ? 0 : 0.34, now + (muted ? 0.28 : 0.45));
     if (!muted && this.context.state === "suspended") void this.context.resume();
   }
 
@@ -96,8 +96,8 @@ export class CnsrcAudioEngine {
     const calm = 1 - speed;
     const shapedDensity = clamp(density);
 
-    this.air.gain.setTargetAtTime(profile.air * (0.28 + shapedDensity * 0.72) * (0.45 + calm * 0.55), now, 0.2);
-    this.bed.gain.setTargetAtTime(0.014 + shapedDensity * 0.007 - speed * 0.004, now, 0.25);
+    this.air.gain.setTargetAtTime(profile.air * (0.34 + shapedDensity * 0.66) * (0.52 + calm * 0.48), now, 0.2);
+    this.bed.gain.setTargetAtTime(0.038 + shapedDensity * 0.016 - speed * 0.006, now, 0.25);
 
     const crossed = [0.18, 0.52, 0.82].some((threshold) =>
       (this.lastSceneProgress < threshold && progress >= threshold) ||
@@ -105,7 +105,7 @@ export class CnsrcAudioEngine {
     );
     const gestureGap = speed > 0.62 ? 620 : 260;
     if (crossed && performance.now() - this.lastGestureAt > gestureGap) {
-      this.triggerGesture(profile.gesture, this.reducedMotion ? 0.3 : 0.38 + shapedDensity * 0.35 + speed * 0.18);
+      this.triggerGesture(profile.gesture, this.reducedMotion ? 0.36 : 0.5 + shapedDensity * 0.3 + speed * 0.16);
     }
     this.lastSceneProgress = progress;
   }
@@ -120,7 +120,7 @@ export class CnsrcAudioEngine {
     this.lastSceneProgress = 0;
     this.applyProfile(scene, 1.4);
     const profile = SCENE_PROFILES[scene];
-    const intensity = scene === "convergence" || scene === "finale" ? 0.62 : 0.32;
+    const intensity = scene === "convergence" || scene === "finale" ? 0.72 : 0.48;
     this.triggerGesture(profile.gesture, intensity);
   }
 
@@ -154,7 +154,7 @@ export class CnsrcAudioEngine {
     bedFilter.frequency.value = 180;
     bedFilter.Q.value = 0.7;
     const bed = context.createGain();
-    bed.gain.value = 0.014;
+    bed.gain.value = 0.038;
     bedFilter.connect(bed).connect(master);
     this.bedFilter = bedFilter;
     this.bed = bed;
@@ -164,7 +164,7 @@ export class CnsrcAudioEngine {
       oscillator.type = index ? "sine" : "triangle";
       oscillator.frequency.value = SCENE_PROFILES.hero.frequency * ratio;
       const gain = context.createGain();
-      gain.gain.value = index ? 0.16 : 0.3;
+      gain.gain.value = index ? 0.18 : 0.32;
       oscillator.connect(gain).connect(bedFilter);
       oscillator.start();
       this.oscillators.push(oscillator);
@@ -211,7 +211,7 @@ export class CnsrcAudioEngine {
     this.lastGestureAt = performance.now();
     const context = this.context;
     const now = context.currentTime;
-    const level = clamp(intensity, 0.12, 0.9) * 0.042;
+    const level = clamp(intensity, 0.12, 0.9) * 0.085;
 
     const oscillator = context.createOscillator();
     const filter = context.createBiquadFilter();
