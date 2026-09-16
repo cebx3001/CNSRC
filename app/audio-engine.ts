@@ -23,18 +23,18 @@ type SceneProfile = {
 };
 
 const SCENE_PROFILES: Record<AudioScene, SceneProfile> = {
-  hero: { frequency: 46, air: 0.026, shimmer: 0.014, resonance: 0.7, gesture: "material" },
-  sum: { frequency: 52, air: 0.024, shimmer: 0.013, resonance: 1.2, gesture: "integrated" },
-  b2w: { frequency: 62, air: 0.021, shimmer: 0.012, resonance: 2.4, gesture: "signal" },
-  monarca: { frequency: 43, air: 0.027, shimmer: 0.014, resonance: 1.1, gesture: "physical" },
-  brown: { frequency: 55, air: 0.032, shimmer: 0.016, resonance: 4.2, gesture: "spatial" },
-  tridifect: { frequency: 38, air: 0.024, shimmer: 0.012, resonance: 1.8, gesture: "material" },
-  convergence: { frequency: 48, air: 0.03, shimmer: 0.016, resonance: 3.4, gesture: "integrated" },
-  capacity: { frequency: 44, air: 0.023, shimmer: 0.012, resonance: 1.4, gesture: "signal" },
-  "project-mall": { frequency: 41, air: 0.029, shimmer: 0.015, resonance: 2.2, gesture: "project" },
-  "project-campaign": { frequency: 47, air: 0.03, shimmer: 0.016, resonance: 1.7, gesture: "project" },
-  "project-corporate": { frequency: 39, air: 0.028, shimmer: 0.015, resonance: 3.1, gesture: "project" },
-  finale: { frequency: 36, air: 0.022, shimmer: 0.011, resonance: 3.8, gesture: "finale" },
+  hero: { frequency: 46, air: 0.018, shimmer: 0.011, resonance: 0.7, gesture: "material" },
+  sum: { frequency: 52, air: 0.017, shimmer: 0.010, resonance: 1.2, gesture: "integrated" },
+  b2w: { frequency: 62, air: 0.015, shimmer: 0.009, resonance: 2.4, gesture: "signal" },
+  monarca: { frequency: 43, air: 0.019, shimmer: 0.011, resonance: 1.1, gesture: "physical" },
+  brown: { frequency: 55, air: 0.022, shimmer: 0.012, resonance: 4.2, gesture: "spatial" },
+  tridifect: { frequency: 38, air: 0.017, shimmer: 0.009, resonance: 1.8, gesture: "material" },
+  convergence: { frequency: 48, air: 0.021, shimmer: 0.012, resonance: 3.4, gesture: "integrated" },
+  capacity: { frequency: 44, air: 0.016, shimmer: 0.009, resonance: 1.4, gesture: "signal" },
+  "project-mall": { frequency: 41, air: 0.020, shimmer: 0.011, resonance: 2.2, gesture: "project" },
+  "project-campaign": { frequency: 47, air: 0.021, shimmer: 0.012, resonance: 1.7, gesture: "project" },
+  "project-corporate": { frequency: 39, air: 0.020, shimmer: 0.011, resonance: 3.1, gesture: "project" },
+  finale: { frequency: 36, air: 0.016, shimmer: 0.008, resonance: 3.8, gesture: "finale" },
 };
 
 const clamp = (value: number, min = 0, max = 1) => Math.min(max, Math.max(min, value));
@@ -341,7 +341,7 @@ export class CnsrcAudioEngine {
     filter.frequency.value = frequency;
     filter.Q.value = 3.2;
     panner.pan.value = kind === "section" ? 0 : (index % 2 ? 0.08 : -0.08);
-    const level = kind === "section" ? 0.034 : 0.045;
+    const level = kind === "section" ? 0.041 : 0.054;
     const duration = kind === "section" ? 0.095 : 0.075;
     gain.gain.setValueAtTime(0.0001, now);
     gain.gain.exponentialRampToValueAtTime(level, now + 0.006);
@@ -359,7 +359,7 @@ export class CnsrcAudioEngine {
     const context = this.context;
     const now = context.currentTime;
     const profile = SCENE_PROFILES[this.currentScene];
-    const level = clamp(intensity, 0.12, 0.55) * 0.016;
+    const level = clamp(intensity, 0.12, 0.55) * 0.28;
 
     const multipliers: Record<GestureType, number> = {
       signal: 7.4,
