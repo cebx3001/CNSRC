@@ -70,10 +70,10 @@ const companies = [
   {
     index: "03",
     audioScene: "brown" as AudioScene,
-    name: "DOCTOR BROWN LABS",
+    name: "DR. BROWN LABS",
     role: "DISEÑO DE EXPERIENCIAS, MEDIOS INMERSIVOS Y TECNOLOGÍA",
     paragraphs: [
-      "Doctor Brown Labs diseña y desarrolla experiencias en las que comunicación, espacio y tecnología funcionan como un mismo sistema. Su trabajo parte de cómo las personas perciben, recorren, observan, escuchan, tocan y participan para convertir contenido e información en experiencias físicas y digitales.",
+      "Dr. Brown Labs diseña y desarrolla experiencias en las que comunicación, espacio y tecnología funcionan como un mismo sistema. Su trabajo parte de cómo las personas perciben, recorren, observan, escuchan, tocan y participan para convertir contenido e información en experiencias físicas y digitales.",
       "Desarrolla videomapping, pixel mapping, multiproyección, fulldome, instalaciones interactivas, XR y spatial computing, además de aplicaciones, plataformas web, experiencias 3D, sistemas en tiempo real y software creado específicamente para las necesidades de cada proyecto.",
       "También integra reconstrucción 3D/4D, gemelos digitales, inteligencia artificial, agentes, visión computacional, sensores y tracking para construir entornos capaces de visualizar información, reaccionar, transformarse y responder a las personas.",
       "La tecnología no aparece como un elemento añadido al final del proceso. Forma parte del diseño de la experiencia desde su origen.",
@@ -436,7 +436,7 @@ export default function Home() {
           <div className="scene-index dark-index">SISTEMA CONJUNTO <span>01—04</span></div>
           <h2 className="sum-title"><KineticText>UNA ESTRUCTURA MÁS GRANDE QUE LA SUMA DE SUS PARTES.</KineticText></h2>
           <p className="sum-copy scene-statement">Cuatro especialidades diferentes trabajando como una sola estructura. Estrategia y comunicación, producción y ejecución, diseño y desarrollo tecnológico, infraestructura e implementación se integran para abordar cada proyecto como un sistema completo.</p>
-          <div className="company-weave" aria-label="B2W Agency, Monarca / 7 Studio, Doctor Brown Labs y Tridifect"><span>B2W AGENCY</span><span>MONARCA / 7 STUDIO</span><span>DOCTOR BROWN LABS</span><span>TRIDIFECT</span></div>
+          <div className="company-weave" aria-label="B2W Agency, Monarca / 7 Studio, Dr. Brown Labs y Tridifect"><span>B2W AGENCY</span><span>MONARCA / 7 STUDIO</span><span>DR. BROWN LABS</span><span>TRIDIFECT</span></div>
           <div className="weave-lines" aria-hidden="true"><i /><i /><i /><i /></div>
         </div>
       </section>
@@ -486,7 +486,7 @@ export default function Home() {
         ))}
       </section>
 
-      <footer id="contacto" className="finale scene-light kinetic-scene" data-kinetic data-audio-scene="finale"><div className="sticky-stage finale-stage"><div className="scene-index dark-index">SIGUIENTE PROYECTO <span>∞</span></div><h2><KineticText>DE LA ESTRATEGIA A LA IMPLEMENTACIÓN.</KineticText></h2><div className="finale-companies">B2W AGENCY · MONARCA / 7 STUDIO · DOCTOR BROWN LABS · TRIDIFECT</div><a className="contact-link" href="mailto:proyectos@cnsrc.com"><span>HABLEMOS DE TU PROYECTO</span><span aria-hidden="true">↗</span></a><div className="footer-line"><span>CNSRC / 2026</span><a href="#top">VOLVER ARRIBA ↑</a></div></div></footer>
+      <footer id="contacto" className="finale scene-light kinetic-scene" data-kinetic data-audio-scene="finale"><div className="sticky-stage finale-stage"><div className="scene-index dark-index">SIGUIENTE PROYECTO <span>∞</span></div><h2><KineticText>DE LA ESTRATEGIA A LA IMPLEMENTACIÓN.</KineticText></h2><div className="finale-companies">B2W AGENCY · MONARCA / 7 STUDIO · DR. BROWN LABS · TRIDIFECT</div><a className="contact-link" href="mailto:proyectos@cnsrc.com"><span>HABLEMOS DE TU PROYECTO</span><span aria-hidden="true">↗</span></a><div className="footer-line"><span>CNSRC / 2026</span><a href="#top">VOLVER ARRIBA ↑</a></div></div></footer>
     </main>
   );
 }
