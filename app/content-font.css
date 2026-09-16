@@ -55,6 +55,9 @@
 .company-weave span:first-child {
   color: var(--signal);
 }
+.company-weave span:nth-child(2) {
+  white-space: nowrap;
+}
 
 @keyframes sum-company-01 {
   0%, 24.9% { color: var(--signal); }
@@ -140,7 +143,7 @@
   font-family: 'Quicksand', sans-serif;
 }
 
-/* Preserve the established display face and keep MONARCA / on line one, SEVEN STUDIO on line two. */
+/* Preserve the display face: MONARCA / on line one, 7 STUDIO locked together on line two. */
 .company-scene[data-audio-scene='monarca'] .company-name .kinetic-text {
   display: grid;
   grid-template-columns: max-content max-content;
@@ -154,8 +157,25 @@
   display: none;
 }
 
+.company-scene[data-audio-scene='monarca'] .company-name .word-unit:nth-child(1) {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.company-scene[data-audio-scene='monarca'] .company-name .word-unit:nth-child(2) {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.company-scene[data-audio-scene='monarca'] .company-name .word-unit:nth-child(3),
 .company-scene[data-audio-scene='monarca'] .company-name .word-unit:nth-child(4) {
-  transform: translateX(-1.55em);
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.company-scene[data-audio-scene='monarca'] .company-name .word-unit:nth-child(4) {
+  margin-left: .72em;
+  transform: none;
 }
 
 /* Keep the closing support copy down with the CTA band so it cannot collide with the large title. */
@@ -225,7 +245,8 @@
   }
 
   .company-scene[data-audio-scene='monarca'] .company-name .word-unit:nth-child(4) {
-    transform: translateX(-1.55em);
+    margin-left: .68em;
+    transform: none;
   }
 
   .site-shell .finale .finale-copy {
