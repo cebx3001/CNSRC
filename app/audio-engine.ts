@@ -65,7 +65,7 @@ export class CnsrcAudioEngine {
     this.master.gain.cancelScheduledValues(now);
     this.master.gain.setValueAtTime(this.master.gain.value, now);
     this.master.gain.linearRampToValueAtTime(0.48, now + 0.2);
-    if (this.drone) this.drone.gain.setTargetAtTime(0.012, now, 0.8);
+    if (this.drone) this.drone.gain.setTargetAtTime(0.020, now, 0.8);
   }
 
   setMuted(muted: boolean) {
@@ -145,7 +145,7 @@ export class CnsrcAudioEngine {
     droneFilter.Q.value = 0.5;
 
     const drone = context.createGain();
-    drone.gain.value = 0.012;
+    drone.gain.value = 0.020;
     droneFilter.connect(drone).connect(master);
     this.drone = drone;
 
