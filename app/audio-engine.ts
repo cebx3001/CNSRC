@@ -26,6 +26,7 @@ const PIP_BASE: Record<AudioScene, number> = {
   "project-corporate": 39,
   finale: 36,
 };
+
 const SCENE_CUE_THRESHOLDS: Record<AudioScene, number[]> = {
   hero: [0.06, 0.25, 0.44, 0.63, 0.82],
   sum: [0.16, 0.48, 0.78],
@@ -47,10 +48,13 @@ export class CnsrcAudioEngine {
   private context: AudioContext | null = null;
   private master: GainNode | null = null;
   private reverbSend: GainNode | null = null;
+  private drone: GainNode | null = null;
+  private droneOscillators: OscillatorNode[] = [];
   private enabled = false;
   private currentScene: AudioScene = "hero";
   private lastSceneProgress = 0;
   private lastCueAt = 0;
+
   async start() {
     if (!this.context) this.createGraph();
     if (!this.context || !this.master) return;
@@ -61,6 +65,7 @@ export class CnsrcAudioEngine {
     this.master.gain.cancelScheduledValues(now);
     this.master.gain.setValueAtTime(this.master.gain.value, now);
     this.master.gain.linearRampToValueAtTime(0.48, now + 0.2);
+    if (this.drone) this.drone.gain.setTargetAtTime(0.012, now, 0.8);
   }
 
   setMuted(muted: boolean) {
@@ -77,6 +82,7 @@ export class CnsrcAudioEngine {
     void progress;
     void velocity;
   }
+
   setSceneState(scene: AudioScene, progress: number, velocity: number, density: number) {
     void velocity;
     void density;
@@ -100,13 +106,17 @@ export class CnsrcAudioEngine {
     if (scene === this.currentScene) return;
     this.currentScene = scene;
     this.lastSceneProgress = 0;
+    this.updateDroneFrequency(scene);
     if (this.enabled && this.context) this.triggerCue("section");
   }
 
   destroy() {
+    this.droneOscillators.forEach((oscillator) => oscillator.stop());
+    this.droneOscillators = [];
     void this.context?.close();
     this.context = null;
   }
+
   private createGraph() {
     const AudioContextConstructor = window.AudioContext ??
       (window as typeof window & { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
@@ -128,6 +138,39 @@ export class CnsrcAudioEngine {
     reverbSend.gain.value = 0.12;
     reverbSend.connect(reverb);
     this.reverbSend = reverbSend;
+
+    const droneFilter = context.createBiquadFilter();
+    droneFilter.type = "lowpass";
+    droneFilter.frequency.value = 520;
+    droneFilter.Q.value = 0.5;
+
+    const drone = context.createGain();
+    drone.gain.value = 0.012;
+    droneFilter.connect(drone).connect(master);
+    this.drone = drone;
+
+    const ratios = [1, 1.5, 2.01, 4.02, 6.03];
+    const levels = [0.3, 0.14, 0.09, 0.055, 0.035];
+    ratios.forEach((ratio, index) => {
+      const oscillator = context.createOscillator();
+      oscillator.type = index === 1 ? "triangle" : "sine";
+      oscillator.frequency.value = PIP_BASE[this.currentScene] * ratio;
+      const gain = context.createGain();
+      gain.gain.value = levels[index];
+      oscillator.connect(gain).connect(droneFilter);
+      oscillator.start();
+      this.droneOscillators.push(oscillator);
+    });
+  }
+
+  private updateDroneFrequency(scene: AudioScene) {
+    if (!this.context || !this.droneOscillators.length) return;
+    const now = this.context.currentTime;
+    const ratios = [1, 1.5, 2.01, 4.02, 6.03];
+    this.droneOscillators.forEach((oscillator, index) => {
+      oscillator.frequency.cancelScheduledValues(now);
+      oscillator.frequency.setTargetAtTime(PIP_BASE[scene] * ratios[index], now, 1.4);
+    });
   }
 
   private triggerCue(kind: "text" | "section", index = 0) {
@@ -163,6 +206,7 @@ export class CnsrcAudioEngine {
     oscillator.start(now);
     oscillator.stop(now + duration + 0.025);
   }
+
   private createImpulseResponse(context: AudioContext, duration: number, decay: number) {
     const length = Math.floor(context.sampleRate * duration);
     const impulse = context.createBuffer(2, length, context.sampleRate);
